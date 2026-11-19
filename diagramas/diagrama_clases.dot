@@ -1,0 +1,122 @@
+digraph DuelArenaUML {
+  graph [
+    rankdir=TB, splines=ortho, nodesep=0.45, ranksep=0.72,
+    bgcolor="white", pad=0.28, margin=0.12,
+    fontname="Arial", fontsize=18, labelloc="t",
+    label="DUEL ARENA - DIAGRAMA DE CLASES UML\nFase de batalla Yu-Gi-Oh! | Arquitectura MVC"
+  ];
+  node [shape=plain, fontname="Arial", fontsize=10];
+  edge [fontname="Arial", fontsize=9, color="#45546B", arrowsize=0.85];
+
+  subgraph cluster_modelo {
+    label="MODELO"; color="#9DB3D1"; penwidth=1.4; style="rounded"; fontname="Arial Bold"; fontsize=13;
+    CartaMonstruo [label=<
+      <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5" COLOR="#36516F">
+        <TR><TD BGCOLOR="#DCE8F5"><B><I>&lt;&lt;abstract&gt;&gt;</I><BR/>CartaMonstruo</B></TD></TR>
+        <TR><TD ALIGN="LEFT">- id: int {readOnly}<BR ALIGN="LEFT"/>- nombre: String<BR ALIGN="LEFT"/>- ataque: int<BR ALIGN="LEFT"/>- defensa: int<BR ALIGN="LEFT"/>- posicion: Posicion<BR ALIGN="LEFT"/>- destruido: boolean<BR ALIGN="LEFT"/>+ SECUENCIA: AtomicInteger {static, final}<BR ALIGN="LEFT"/>+ MAX_ESTADISTICA: int {static, final}</TD></TR>
+        <TR><TD ALIGN="LEFT">+ getNombre()/setNombre()<BR ALIGN="LEFT"/>+ getAtaque()/setAtaque()<BR ALIGN="LEFT"/>+ getDefensa()/setDefensa()<BR ALIGN="LEFT"/>+ getPosicion()/setPosicion()<BR ALIGN="LEFT"/>+ marcarDestruido(): void<BR ALIGN="LEFT"/>+ getTipoCarta(): String {abstract}<BR ALIGN="LEFT"/>+ toString(): String</TD></TR>
+      </TABLE>>];
+    MonstruoNormal [label=<
+      <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5" COLOR="#36516F">
+        <TR><TD BGCOLOR="#E7F3E8"><B>MonstruoNormal</B></TD></TR>
+        <TR><TD ALIGN="LEFT"> </TD></TR>
+        <TR><TD ALIGN="LEFT">+ MonstruoNormal(nombre, ATQ, DEF, posicion)<BR ALIGN="LEFT"/>+ getTipoCarta(): String {override}</TD></TR>
+      </TABLE>>];
+    MonstruoEfecto [label=<
+      <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5" COLOR="#36516F">
+        <TR><TD BGCOLOR="#E7F3E8"><B>MonstruoEfecto</B></TD></TR>
+        <TR><TD ALIGN="LEFT">- descripcionEfecto: String</TD></TR>
+        <TR><TD ALIGN="LEFT">+ get/setDescripcionEfecto()<BR ALIGN="LEFT"/>+ getTipoCarta(): String {override}</TD></TR>
+      </TABLE>>];
+    Jugador [label=<
+      <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5" COLOR="#36516F">
+        <TR><TD BGCOLOR="#DCE8F5"><B>Jugador</B></TD></TR>
+        <TR><TD ALIGN="LEFT">- nombre: String<BR ALIGN="LEFT"/>- puntosVida: int<BR ALIGN="LEFT"/>- cartas: List&lt;CartaMonstruo&gt;<BR ALIGN="LEFT"/>+ LP_INICIALES: int {static, final}</TD></TR>
+        <TR><TD ALIGN="LEFT">+ get/setNombre()<BR ALIGN="LEFT"/>+ get/setPuntosVida()<BR ALIGN="LEFT"/>+ recibirDanio(int): int {overload}<BR ALIGN="LEFT"/>+ recibirDanio(int, String): int {overload}<BR ALIGN="LEFT"/>+ agregarCarta(CartaMonstruo): void<BR ALIGN="LEFT"/>+ getMonstruosActivos(): List</TD></TR>
+      </TABLE>>];
+    ReglasCombate [label=<
+      <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5" COLOR="#36516F">
+        <TR><TD BGCOLOR="#F2E7D5"><B><I>&lt;&lt;interface&gt;&gt;</I><BR/>ReglasCombate</B></TD></TR>
+        <TR><TD ALIGN="LEFT">+ atacar(jugador, carta, rival, defensor): ResultadoCombate<BR ALIGN="LEFT"/>+ atacar(jugador, carta, rival): ResultadoCombate</TD></TR>
+      </TABLE>>];
+    MotorCombate [label=<
+      <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5" COLOR="#36516F">
+        <TR><TD BGCOLOR="#DCE8F5"><B>MotorCombate</B></TD></TR>
+        <TR><TD ALIGN="LEFT"> </TD></TR>
+        <TR><TD ALIGN="LEFT">+ atacar(jugador, carta, rival, defensor): ResultadoCombate<BR ALIGN="LEFT"/>+ atacar(jugador, carta, rival): ResultadoCombate {overload}<BR ALIGN="LEFT"/>- validarAtaque(...): void</TD></TR>
+      </TABLE>>];
+    ResultadoCombate [label=<
+      <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5" COLOR="#36516F">
+        <TR><TD BGCOLOR="#DCE8F5"><B>ResultadoCombate</B></TD></TR>
+        <TR><TD ALIGN="LEFT">- fecha: LocalDateTime {final}<BR ALIGN="LEFT"/>- jugadorAtacante: String {final}<BR ALIGN="LEFT"/>- cartaAtacante: String {final}<BR ALIGN="LEFT"/>- jugadorDefensor: String {final}<BR ALIGN="LEFT"/>- cartaDefensora: String {final}<BR ALIGN="LEFT"/>- danioLP: int {final}<BR ALIGN="LEFT"/>- resultado: String {final}</TD></TR>
+        <TR><TD ALIGN="LEFT">+ getters(): datos<BR ALIGN="LEFT"/>+ toLineaHistorial(): String<BR ALIGN="LEFT"/>+ toString(): String</TD></TR>
+      </TABLE>>];
+    HistorialCombate [label=<
+      <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5" COLOR="#36516F">
+        <TR><TD BGCOLOR="#DCE8F5"><B>HistorialCombate</B></TD></TR>
+        <TR><TD ALIGN="LEFT">- archivo: Path</TD></TR>
+        <TR><TD ALIGN="LEFT">+ setArchivo(Path): void<BR ALIGN="LEFT"/>+ guardarResultado(ResultadoCombate): void<BR ALIGN="LEFT"/>+ leerRegistros(): List&lt;String&gt;</TD></TR>
+      </TABLE>>];
+    Posicion [label=<
+      <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5" COLOR="#36516F">
+        <TR><TD BGCOLOR="#F2E7D5"><B><I>&lt;&lt;enumeration&gt;&gt;</I><BR/>Posicion</B></TD></TR>
+        <TR><TD ALIGN="LEFT">ATAQUE<BR ALIGN="LEFT"/>DEFENSA</TD></TR>
+      </TABLE>>];
+  }
+
+  subgraph cluster_controlador {
+    label="CONTROLADOR"; color="#C8A4A4"; penwidth=1.4; style="rounded"; fontname="Arial Bold"; fontsize=13;
+    ControladorBatalla [label=<
+      <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5" COLOR="#795454">
+        <TR><TD BGCOLOR="#F4E2E2"><B>ControladorBatalla</B></TD></TR>
+        <TR><TD ALIGN="LEFT">- vista: VistaPrincipal<BR ALIGN="LEFT"/>- motor: MotorCombate<BR ALIGN="LEFT"/>- historial: HistorialCombate<BR ALIGN="LEFT"/>- resultados: List&lt;ResultadoCombate&gt;<BR ALIGN="LEFT"/>- jugador1, jugador2: Jugador</TD></TR>
+        <TR><TD ALIGN="LEFT">+ iniciarDuelo(): void<BR ALIGN="LEFT"/>+ agregarCarta(): void<BR ALIGN="LEFT"/>+ atacarMonstruo(): void<BR ALIGN="LEFT"/>+ atacarDirectamente(): void<BR ALIGN="LEFT"/>+ mostrarReportes(): void</TD></TR>
+      </TABLE>>];
+  }
+
+  subgraph cluster_vista {
+    label="VISTA"; color="#9BBFA8"; penwidth=1.4; style="rounded"; fontname="Arial Bold"; fontsize=13;
+    VistaPrincipal [label=<
+      <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5" COLOR="#456C53">
+        <TR><TD BGCOLOR="#E3F0E7"><B>VistaPrincipal</B><BR/><I>JFrame Form de NetBeans</I></TD></TR>
+        <TR><TD ALIGN="LEFT">- campos y combos: Swing<BR ALIGN="LEFT"/>- areaHistorial: JTextArea<BR ALIGN="LEFT"/>- labelsLP: JLabel</TD></TR>
+        <TR><TD ALIGN="LEFT">+ onIniciar(ActionListener): void<BR ALIGN="LEFT"/>+ onAgregarCarta(ActionListener): void<BR ALIGN="LEFT"/>+ onAtacar(ActionListener): void<BR ALIGN="LEFT"/>+ mostrarError(String): void<BR ALIGN="LEFT"/>+ agregarAlHistorial(String): void</TD></TR>
+      </TABLE>>];
+  }
+
+  subgraph cluster_principal {
+    label="APLICACION"; color="#B6A4D1"; penwidth=1.4; style="rounded"; fontname="Arial Bold"; fontsize=13;
+    Main [label=<
+      <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5" COLOR="#66517F">
+        <TR><TD BGCOLOR="#EDE6F5"><B>Main</B></TD></TR>
+        <TR><TD ALIGN="LEFT"> </TD></TR>
+        <TR><TD ALIGN="LEFT">+ main(String[]): void<BR ALIGN="LEFT"/>+ generarDosReportes(List, List, List): List&lt;String&gt;<BR ALIGN="LEFT"/>- imprimirReportesDeEjemplo(): void</TD></TR>
+      </TABLE>>];
+  }
+
+  // Herencia
+  MonstruoNormal -> CartaMonstruo [arrowhead=empty, penwidth=1.2, label="hereda"];
+  MonstruoEfecto -> CartaMonstruo [arrowhead=empty, penwidth=1.2, label="hereda"];
+  // Implementación de interfaz
+  MotorCombate -> ReglasCombate [style=dashed, arrowhead=empty, penwidth=1.2, label="implementa"];
+  // Asociaciones
+  Jugador -> CartaMonstruo [dir=both, arrowtail=diamond, arrowhead=none, label="contiene 0..*", penwidth=1.2];
+  CartaMonstruo -> Posicion [arrowhead=vee, label="usa"];
+  ControladorBatalla -> VistaPrincipal [arrowhead=vee, label="actualiza / escucha"];
+  ControladorBatalla -> Jugador [arrowhead=vee, label="administra 2"];
+  ControladorBatalla -> MotorCombate [arrowhead=vee, label="invoca"];
+  ControladorBatalla -> HistorialCombate [arrowhead=vee, label="persiste"];
+  ControladorBatalla -> ResultadoCombate [arrowhead=vee, label="acumula *"];
+  // Dependencias
+  MotorCombate -> Jugador [style=dotted, arrowhead=vee, label="calcula LP"];
+  MotorCombate -> ResultadoCombate [style=dotted, arrowhead=vee, label="crea"];
+  HistorialCombate -> ResultadoCombate [style=dotted, arrowhead=vee, label="serializa"];
+  VistaPrincipal -> CartaMonstruo [style=dotted, arrowhead=vee, label="muestra opciones"];
+  Main -> ControladorBatalla [style=dotted, arrowhead=vee, label="inicia"];
+  Main -> Jugador [style=dotted, arrowhead=vee, label="reporta"];
+  Main -> CartaMonstruo [style=dotted, arrowhead=vee, label="reporta"];
+
+  {rank=same; MonstruoNormal; MonstruoEfecto; Jugador; ReglasCombate;}
+  {rank=same; MotorCombate; ResultadoCombate; HistorialCombate; Posicion;}
+  {rank=same; VistaPrincipal; ControladorBatalla; Main;}
+}
